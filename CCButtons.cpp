@@ -2,9 +2,11 @@
 
 USING_NS_CC;
 
-CCButtons* CCButtons::create() {
+CCButtons* CCButtons::create() 
+{
 	CCButtons* ret = new CCButtons();
-	if (ret && ret->init()) {
+	if (ret && ret->init())
+	{
 		ret->autorelease();
 		return ret;
 	}
@@ -12,7 +14,8 @@ CCButtons* CCButtons::create() {
 	return nullptr;
 }
 
-bool CCButtons::init() {
+bool CCButtons::init() 
+{
 	if (!CCLayer::init()) return false;
 
 	this->setTouchEnabled(true);
@@ -25,16 +28,15 @@ void CCButtons::registerWithTouchDispatcher() {
 	CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 0, true);
 }
 
-void CCButtons::addButton(CCSprite* button,
-	const std::function<void()>& callback,
-	float scaleNormal,
-	float scalePressed) {
+void CCButtons::addButton(CCSprite* button, const std::function<void()>& callback, float scaleNormal, float scalePressed) 
+{
 	this->addChild(button);
 	button->setScale(scaleNormal);
 	_buttons.push_back({ button, callback, scaleNormal, scalePressed });
 }
 
-bool CCButtons::ccTouchBegan(CCTouch* touch, CCEvent* event) {
+bool CCButtons::ccTouchBegan(CCTouch* touch, CCEvent* event) 
+{
 	CCPoint location = this->convertToNodeSpace(touch->getLocation());
 
 	for (auto& btnInfo : _buttons) {
@@ -48,10 +50,12 @@ bool CCButtons::ccTouchBegan(CCTouch* touch, CCEvent* event) {
 	return true;
 }
 
-void CCButtons::ccTouchMoved(CCTouch* touch, CCEvent* event) {
+void CCButtons::ccTouchMoved(CCTouch* touch, CCEvent* event) 
+{
 	CCPoint location = this->convertToNodeSpace(touch->getLocation());
 
-	for (auto& btnInfo : _buttons) {
+	for (auto& btnInfo : _buttons)
+		{
 		if (btnInfo.sprite->boundingBox().containsPoint(location)) {
 			if (_currentButton != btnInfo.sprite) {
 				resetAllButtonScale();
@@ -67,10 +71,13 @@ void CCButtons::ccTouchMoved(CCTouch* touch, CCEvent* event) {
 	_currentButton = nullptr;
 }
 
-void CCButtons::ccTouchEnded(CCTouch* touch, CCEvent* event) {
+void CCButtons::ccTouchEnded(CCTouch* touch, CCEvent* event) 
+{
 	if (_currentButton) {
-		for (auto& btnInfo : _buttons) {
-			if (btnInfo.sprite == _currentButton && btnInfo.callback) {
+		for (auto& btnInfo : _buttons) 
+		{
+			if (btnInfo.sprite == _currentButton && btnInfo.callback) 
+			{
 				btnInfo.callback();
 				btnInfo.sprite->stopAllActions();
 				btnInfo.sprite->runAction(CCEaseBackOut::create(CCScaleTo::create(0.15f, btnInfo.scaleNormal)));
@@ -85,7 +92,8 @@ void CCButtons::ccTouchEnded(CCTouch* touch, CCEvent* event) {
 	_currentButton = nullptr;
 }
 
-void CCButtons::resetAllButtonScale() {
+void CCButtons::resetAllButtonScale() 
+{
 	for (auto& btnInfo : _buttons) {
 		btnInfo.sprite->stopAllActions();
 		btnInfo.sprite->runAction(CCScaleTo::create(0.1f, btnInfo.scaleNormal));
